@@ -1,0 +1,21 @@
+# Node modules
+Frontend/node_modules
+server/node_modules
+
+# Next.js / frontend build outputs
+Frontend/.next
+Frontend/out
+Frontend/build
+
+# Environment variables
+Frontend/.env*
+server/.env*
+
+# Logs
+*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
