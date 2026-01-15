@@ -9,9 +9,10 @@ import api from "@/lib/api";
 interface ChatWindowProps {
   activeUser: any;
   currentUserId: string;
+  onBack?: () => void;
 }
 
-export default function ChatWindow({ activeUser, currentUserId }: ChatWindowProps) {
+export default function ChatWindow({ activeUser, currentUserId, onBack }: ChatWindowProps) {
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -80,21 +81,46 @@ export default function ChatWindow({ activeUser, currentUserId }: ChatWindowProp
   };
 
   return (
-    <div className="flex flex-col flex-1">
-      <div className="p-4 bg-gray-100 border-b font-semibold">{activeUser.name}</div>
+    <div className="flex-1 flex flex-col bg-white h-full">
+      {/* Header */}
+      <div className="p-3 md:p-4 border-b border-gray-300 bg-green-500 text-white flex items-center justify-between sticky top-0 z-10">
+        <div className="flex items-center gap-2 flex-1">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="md:hidden bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-sm font-semibold"
+            >
+              ← Back
+            </button>
+          )}
+          <div>
+            <h2 className="text-base md:text-xl font-bold">{activeUser?.name}</h2>
+            <p className="text-xs md:text-sm text-green-100">Online</p>
+          </div>
+        </div>
+      </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {messages.map(m => (
-          <Message key={m._id} message={m} currentUserId={currentUserId} />
-        ))}
-
-        {isTyping && (
-          <div className="text-sm text-gray-500 italic">{activeUser.name} is typing...</div>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide p-3 md:p-4 bg-gray-50 flex flex-col gap-2 md:gap-3">
+        {messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-gray-400 text-center">
+            <p className="text-sm md:text-base">No messages yet. Start the conversation!</p>
+          </div>
+        ) : (
+          messages.map((msg, idx) => (
+            <Message key={idx} message={msg} currentUserId={currentUserId} />
+          ))
         )}
-
+        {isTyping && (
+          <div className="text-xs md:text-sm text-gray-500 italic flex items-center gap-1">
+            <span className="inline-block w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+            typing...
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Message Input */}
       <MessageInput value={text} onChange={handleTyping} onSend={sendMessage} />
     </div>
   );
